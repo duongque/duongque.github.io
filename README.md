@@ -6,17 +6,25 @@ Site statique bilingue (EN par défaut, FR optionnel) destiné à GitHub Pages.
 
 ```
 portfolio/
-├── index.html
+├── index.html           # À propos
+├── experience.html      # Parcours professionnel
+├── education.html       # Formation + Événements
+├── projects.html        # Projets + Publications
 ├── css/
 │   └── styles.css
 ├── js/
 │   ├── i18n.js          # dictionnaire EN/FR
-│   ├── particles.js     # animation de fond
+│   ├── logos.js         # injection des logos (chips/icônes)
+│   ├── projects.js      # données projets + modale détaillée
+│   ├── spotlight.js     # halo curseur
 │   └── main.js          # toggle langue, menu mobile, liens config
 ├── assets/
-│   └── cv/
-│       ├── CV_Quentin_DUONG_EN.pdf   # version EN (présente)
-│       └── CV_Quentin_DUONG_FR.pdf   # version FR (à uploader)
+│   ├── cv/              # CV_Quentin_DUONG_EN.pdf / _FR.pdf
+│   ├── events/          # visuels de la section Événements
+│   ├── logos/           # logos technos / organisations
+│   ├── projects/        # visuels des projets
+│   └── publications/    # couvertures des publications
+├── robots.txt
 ├── .nojekyll            # désactive Jekyll sur GitHub Pages
 └── README.md
 ```
@@ -60,14 +68,6 @@ const CONFIG = {
 ### Textes EN/FR
 
 Tout est dans `js/i18n.js`. Les clés HTML sont liées via l'attribut `data-i18n="section.cle"`.
-
-### Photo de profil
-
-Si tu veux ajouter une photo : place-la dans `assets/photo.jpg` puis ajoute dans le hero ou la section about :
-
-```html
-<img src="assets/photo.jpg" alt="Quentin DUONG" class="hero__photo" />
-```
 
 ---
 
@@ -211,17 +211,17 @@ GitHub Pages redéploie automatiquement en ~30 secondes.
 - **Accessibilité** : contrastes vérifiés, animations désactivées si `prefers-reduced-motion`.
 - **Responsive** : breakpoints à 860px (menu mobile) et 520px (typo hero).
 - **Pas de tracking** : aucun cookie, aucun script tiers d'analytics.
-- **Particules** : auto-désactivées si l'utilisateur a `prefers-reduced-motion` ou si l'onglet est masqué (économie batterie).
+- **Spotlight curseur** : halo qui suit la souris ; désactivé sur écran tactile ou si `prefers-reduced-motion`, masqué quand l'onglet est en arrière-plan.
 
 ---
 
 ## 7. Évolutions possibles
 
-- Ajouter une page `/projects/<slug>.html` détaillée pour chaque projet FLUKA (géométrie, scoring, résultats, snapshots)
+- Page dédiée `/projects/<slug>.html` par projet (meilleur SEO / partage de lien) — actuellement géré par une modale détaillée pilotée par `js/projects.js`
 - Galerie d'images Flair / SimpleGeo
 - Section "Talks & Posters"
 - RSS / Atom feed pour les news
-- Photo + court CV imprimable PDF généré depuis les mêmes données
+- Court CV imprimable PDF généré depuis les mêmes données
 - Mode clair (currently dark only)
 
 Bon déploiement !

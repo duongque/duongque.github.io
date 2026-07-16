@@ -342,8 +342,7 @@ svg {
   display: none;
 }
 
-/* Side bottom — sticks at the bottom of the sidebar; the photo wrapper above
-   uses flex:1 to consume the remaining space and centre the image. */
+/* Side bottom — sticks at the bottom of the sidebar. */
 .side__bottom {
   flex: 0 0 auto;
   display: flex;
@@ -821,36 +820,6 @@ svg {
 /* Mobile-only intro */
 .mobile-intro {
   display: none;
-}
-
-/* Profile photo lives in the sidebar between header and socials.
-   The wrapper takes all available flex space and centres the image. */
-.side__photo-wrap {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  width: 100%;
-  padding: 1rem 0;
-}
-
-.hero__photo {
-  width: 140px;
-  height: 140px;
-  max-width: 80%;
-  /* shrinks gracefully if sidebar narrows */
-  max-height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  margin: 0;
-  filter: grayscale(0.15) contrast(1.05);
-  transition: filter .3s var(--ease);
-}
-
-.hero__photo:hover {
-  filter: grayscale(0) contrast(1);
 }
 
 /* ---------- Sections ---------- */
@@ -2417,4 +2386,201 @@ svg {
 button:focus-visible,
 a:focus-visible {
   outline-offset: 4px;
+}
+
+/* ============================================================
+   Clickable featured card + project detail modal
+   ============================================================ */
+.featured__item {
+  cursor: pointer;
+  transition: transform .25s var(--ease);
+}
+
+.featured__item:hover,
+.featured__item:focus-visible {
+  transform: translateY(-4px);
+}
+
+.featured__item:hover .featured__body,
+.featured__item:focus-visible .featured__body {
+  border-color: var(--accent);
+}
+
+.featured__open {
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  color: var(--accent);
+  margin-top: .9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.featured__open-arrow {
+  transition: transform .25s var(--ease);
+}
+
+.featured__item:hover .featured__open-arrow,
+.featured__item:focus-visible .featured__open-arrow {
+  transform: translateX(4px);
+}
+
+/* ---- Modal ---- */
+.pmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(1rem, 5vh, 4rem) 1rem;
+  overflow-y: auto;
+}
+
+.pmodal[hidden] {
+  display: none;
+}
+
+.pmodal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 12, 27, 0.78);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: pmodal-fade .2s var(--ease);
+}
+
+.pmodal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(880px, 100%);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(1.5rem, 4vw, 3rem);
+  box-shadow: 0 30px 70px rgba(2, 12, 27, 0.6);
+  animation: pmodal-rise .25s var(--ease);
+}
+
+@keyframes pmodal-fade {
+  from { opacity: 0; }
+}
+
+@keyframes pmodal-rise {
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+.pmodal__close {
+  position: absolute;
+  top: .9rem;
+  right: .9rem;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--slate-light);
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+
+.pmodal__close:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.pmodal__overline {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  color: var(--accent);
+  margin-bottom: .5rem;
+}
+
+.pmodal__title {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 600;
+  color: var(--lightest);
+  line-height: 1.2;
+  padding-right: 3rem;
+}
+
+.pmodal__subtitle {
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--slate-light);
+  margin-top: .5rem;
+  line-height: 1.35;
+}
+
+.pmodal__section {
+  margin-top: 2rem;
+}
+
+.pmodal__section-title {
+  font-family: var(--font-mono);
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: .8rem;
+  padding-bottom: .4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pmodal__section p {
+  color: var(--slate-light);
+  font-size: .95rem;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+.pmodal__section p + p {
+  margin-top: .9rem;
+}
+
+.pmodal__figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.pmodal__figure {
+  margin: 0;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.pmodal__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bg);
+}
+
+.pmodal__figure figcaption {
+  padding: .7rem .9rem;
+  font-size: .82rem;
+  color: var(--slate);
+  line-height: 1.45;
+  border-top: 1px solid var(--line);
+}
+
+.pmodal__tech {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  color: var(--slate);
+}
+
+body.is-modal-open {
+  overflow: hidden;
 }

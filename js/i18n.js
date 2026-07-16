@@ -72,6 +72,11 @@ window.I18N = {
     },
     projects: {
       title: "Some things I've built",
+      open_hint: "View project",
+      sec_overview: "Overview",
+      sec_method: "Methodology & pipeline",
+      sec_results: "Results & figures",
+      close: "Close",
     },
     events: {
       title: "Events & training",
@@ -203,6 +208,11 @@ window.I18N = {
     },
     projects: {
       title: "Quelques projets que j'ai menés",
+      open_hint: "Voir le projet",
+      sec_overview: "Présentation",
+      sec_method: "Méthodologie & pipeline",
+      sec_results: "Résultats & figures",
+      close: "Fermer",
     },
     events: {
       title: "Événements & formations",
