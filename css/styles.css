@@ -664,7 +664,7 @@ svg {
 }
 
 .event-preview.is-reviewing .event-preview__cover::after {
-  content: 'Reviewing';
+  content: 'Submitted';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1984,7 +1984,7 @@ svg {
 }
 
 .pub-preview.is-reviewing .pub-preview__cover::after {
-  content: 'Reviewing';
+  content: 'Soumis';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -2463,11 +2463,16 @@ a:focus-visible {
 }
 
 @keyframes pmodal-fade {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 @keyframes pmodal-rise {
-  from { opacity: 0; transform: translateY(16px); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 }
 
 .pmodal__close {
@@ -2537,7 +2542,7 @@ a:focus-visible {
   text-align: justify;
 }
 
-.pmodal__section p + p {
+.pmodal__section p+p {
   margin-top: .9rem;
 }
 
