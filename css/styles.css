@@ -2546,10 +2546,39 @@ a:focus-visible {
   margin-top: .9rem;
 }
 
+/* Single column: figures and analysis notes stack vertically, each one as wide
+   as the surrounding text. */
 .pmodal__figures {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+/* A figure and its own analysis text, kept tighter than the gap between blocks */
+.pmodal__result {
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+/* Analysis text, either standalone or attached to a figure ({ text: '...' }) */
+.pmodal__note p {
+  color: var(--slate-light);
+  font-size: .95rem;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+.pmodal__note p+p {
+  margin-top: .9rem;
+}
+
+.pmodal__note-title {
+  font-family: var(--font-mono);
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: .45rem;
 }
 
 .pmodal__figure {
@@ -2573,6 +2602,66 @@ a:focus-visible {
   color: var(--slate);
   line-height: 1.45;
   border-top: 1px solid var(--line);
+}
+
+/* Tables inside a result ({ table: { head, rows, caption, align } }).
+   The wrapper scrolls on its own so a wide table never widens the modal. */
+.pmodal__table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.pmodal__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+  color: var(--slate-light);
+}
+
+.pmodal__table caption {
+  caption-side: bottom;
+  padding: .7rem .9rem;
+  font-size: .82rem;
+  color: var(--slate);
+  line-height: 1.45;
+  text-align: left;
+  border-top: 1px solid var(--line);
+}
+
+.pmodal__table th,
+.pmodal__table td {
+  padding: .55rem .9rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+
+.pmodal__table th {
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.pmodal__table tbody tr:last-child th,
+.pmodal__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.pmodal__table tbody tr:hover {
+  background: var(--bg-soft);
+}
+
+/* Per-column alignment (align: ['left', 'right', 'center']) */
+.pmodal__table .is-right {
+  text-align: right;
+}
+
+.pmodal__table .is-center {
+  text-align: center;
 }
 
 .pmodal__tech {

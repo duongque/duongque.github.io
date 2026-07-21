@@ -12,9 +12,15 @@
        title: '...', subtitle: '...', desc: '...',
        detail: {                         // shown in the click-through modal
          methodology: '...',             // paragraph(s), \n\n = new paragraph
-         results: [                      // figure gallery (add as many as you want)
-           { src: 'assets/projects/xxx.png', caption: '...' }
-         ]
+         results: [                      // figures, notes and tables, in order
+           { src: '...png', caption: '...' },              // figure alone
+           { src: '...png', caption: '...', text: '...' }, // figure + its analysis
+           { text: '...', heading: '...' },                // text alone, between
+           { table: { head: [...], rows: [[...], [...]],   // two figures
+                      caption: '...', align: [...] } }     // table (see example
+         ]                             // below). Blocks of one entry render as
+                                       // figure, then text, then table.
+                                       // \n\n = new paragraph, heading optional
        }
      },
      fr: { ...same shape... }
@@ -50,14 +56,47 @@ window.PROJECTS = {
           results: [
             {
               src: 'assets/projects/ntof_geometry.png',
-              caption: 'Figure 1 $-$ R-Z cross-section of the n_TOF EAR2 beam line as modelled in FLUKA. Top: the full 25 m line from the lead spallation target to the beam dump, with the horizontal axis compressed (Z and R are not to the same scale); the dashed line marks the measurement plane at a flight path of 19.95 m. Bottom: the second collimator to scale, showing its axial layering $-$ 2 m of steel, then 0.6 m of borated polyethylene, then 0.4 m with a B₄C core $-$ and the conical bore narrowing from 70 mm to 21.8 mm. All body coordinates are parsed directly from the FLUKA input, so the drawing cannot drift from the simulated geometry. Dimensions follow Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90–98, Tables 1–2.'
+              caption: 'Figure 1 $-$ R-Z cross-section of the n_TOF EAR2 beam line as modelled in FLUKA. Top: the full 25 m line from the lead spallation target to the beam dump, with the horizontal axis compressed (Z and R are not to the same scale); the dashed line marks the measurement plane at a flight path of 19.95 m. Bottom: the second collimator to scale, showing its axial layering $-$ 2 m of steel, then 0.6 m of borated polyethylene, then 0.4 m with a B₄C core $-$ and the conical bore narrowing from 70 mm to 21.8 mm. All body coordinates are parsed directly from the FLUKA input, so the drawing cannot drift from the simulated geometry. Dimensions follow Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tables 1-2.'
               //src: 'assets/projects/transmutex_geometry.png',
               //caption: 'Reference MEGAPIE-class geometry: T91 beam window, LBE target, liquid-lead coolant, T91 vessel and concrete shield, generated from the YAML configuration.'
+            },
+            {
+              src: 'assets/projects/ntof_flux_lethargy.png',
+              caption: 'Figure 2 $-$ Emitted neutron source spectrum in isolethargic units.',
+              text: 'The composite source spectrum: thermal Maxwellian peak, rising epithermal power-law region, fast log-normal peak near 1 MeV and a high-energy component. Presented as documentation of the source model, not as a validation.'
+            },
+            {
+              src: 'assets/projects/ntof_beam_fwhm.png',
+              caption: 'Figure 3 $-$ Radial beam profile at the sample position, simulated vs published FWHM.',
+              text: 'Test',
+              table: {
+                head: ['Effective source radius', 'Analytic FWHM', 'FLUKA'],
+                align: ['center', 'center', 'center'],
+                rows: [
+                  ['0 (point source)', '23.9 mm', '$-$'],
+                  ['10 cm', '21.0 mm', '20.2 mm'],
+                  ['15.85 cm', '27.0 mm', '29.5 mm'],
+                ]
+              }
+
+              /* ---- Table, rendered after the text of this entry ------------
+                 head    : header row, optional
+                 rows    : one array of cells per row
+                 caption : line printed under the table, optional
+                 align   : per column, 'left' (default), 'right' or 'center'
+                 Cells are plain strings; $...$ math works as everywhere else.
+
+              , table: {
+                  head: ['Quantity', 'This model', 'Published', 'Ratio'],
+                  align: ['left', 'right', 'right', 'right'],
+                  rows: [
+                    ['FWHM at 19.95 m (mm)', '21.4', '19.8', '1.08'],
+                    ['Beam area (cm$^2$)',    '3.6',  '3.1',  '1.16']
+                  ],
+                  caption: 'Table 1 $-$ Simulated beam width against the values quoted in Weiß et al. (2015).'
+                }
+              ------------------------------------------------------------- */
             }
-            /* Add more result figures here, e.g.:
-            { src: 'assets/projects/transmutex_dose_map.png', caption: 'USRBIN residual dose map 30 days after end-of-irradiation.' },
-            { src: 'assets/projects/transmutex_po210.png',   caption: 'Po-210 activity time evolution during cooling.' }
-            */
           ]
         }
       },
@@ -81,15 +120,47 @@ window.PROJECTS = {
             'Scoring et dépouillement. Spectre au plan de mesure (19.95 m, convention Ø 100 mm), profil radial à 1 mm, carte H*(10) (ICRP-74), inventaires de nucléides résiduels et cartes de dose à six temps de refroidissement après 180 j. Fusion par usxsuw/usbsuw/ustsuw/usrsuw, analyse Python, script shell qui enchaîne recompilation conditionnelle → cycles → fusion → figures.',
           results: [
             {
-              src: 'assets/projects/transmutex_geometry.png',
+              src: 'assets/projects/ntof_geometry.png',
               caption: 'Figure 1 $-$ Coupe R-Z de la ligne n_TOF EAR2 telle que modélisée dans FLUKA. En haut : la ligne complète sur 25 m, de la cible de spallation en plomb au beam dump, l\'axe horizontal étant comprimé (Z et R ne sont pas à la même échelle) ; le trait tireté marque le plan de mesure à 19.95 m de parcours. En bas : le second collimateur à l\'échelle, montrant son empilement axial $-$ 2 m d\'acier, puis 0.6 m de polyéthylène boré, puis 0.4 m à cœur de B₄C $-$ et l\'alésage conique se resserrant de 70 mm à 21.8 mm. Les coordonnées de tous les corps sont lues directement dans le fichier d\'entrée FLUKA : le tracé ne peut donc pas diverger de la géométrie simulée. Cotes d\'après Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tableaux 1-2.'
               //  src: 'assets/projects/transmutex_geometry.png',
               //  caption: 'Géométrie de référence de classe MEGAPIE : fenêtre faisceau T91, cible LBE, caloporteur plomb liquide, cuve T91 et blindage béton, générée depuis la configuration YAML.'
+            },
+            {
+              src: 'assets/projects/ntof_flux_lethargy.png',
+              caption: 'Figure 2 $-$ Spectre neutronique source émis, en unités isoléthargiques.',
+              text: 'Le spectre source composite : pic thermique, zone épithermique croissante, pic rapide vers 1 MeV et composante haute énergie. Présenté comme documentation du modèle de source, non comme une validation.'
+            },
+            {
+              src: 'assets/projects/ntof_beam_fwhm.png',
+              caption: 'Figure 3 $-$ Profil radial du faisceau à la position échantillon, FWHM simulée vs publiée.',
+              text: 'Test',
+              table: {
+                head: ['Effective source radius', 'Analytic FWHM', 'FLUKA'],
+                align: ['center', 'center', 'center'],
+                rows: [
+                  ['0 (point source)', '23.9 mm', '$-$'],
+                  ['10 cm', '21.0 mm', '20.2 mm'],
+                  ['15.85 cm', '27.0 mm', '29.5 mm'],
+                ]
+              }
+              /* ---- Tableau, rendu après le texte de cette entrée -----------
+                 head    : ligne d'en-tête, optionnelle
+                 rows    : un tableau de cellules par ligne
+                 caption : ligne imprimée sous le tableau, optionnelle
+                 align   : par colonne, 'left' (défaut), 'right' ou 'center'
+                 Les cellules sont de simples chaînes ; $...$ fonctionne.
+
+              , table: {
+                  head: ['Grandeur', 'Ce modèle', 'Publié', 'Rapport'],
+                  align: ['left', 'right', 'right', 'right'],
+                  rows: [
+                    ['FWHM à 19.95 m (mm)',   '21.4', '19.8', '1.08'],
+                    ['Surface faisceau (cm$^2$)', '3.6', '3.1', '1.16']
+                  ],
+                  caption: 'Tableau 1 $-$ Largeur de faisceau simulée face aux valeurs de Weiß et al. (2015).'
+                }
+              ------------------------------------------------------------- */
             }
-            /* Ajouter d\'autres figures de résultats ici, ex. :
-            { src: 'assets/projects/transmutex_dose_map.png', caption: 'Carte de dose résiduelle USRBIN 30 jours après fin d\'irradiation.' },
-            { src: 'assets/projects/transmutex_po210.png',   caption: 'Évolution temporelle de l\'activité du Po-210 pendant le refroidissement.' }
-            */
           ]
         }
       }
@@ -187,17 +258,60 @@ window.renderProjects = function (lang) {
 
   function buildFigures(results, lbl) {
     if (!results || !results.length) return '';
-    const figs = results.map(r => `
+    // Each entry may carry a figure (src + caption), an analysis block
+    // (text + heading), a table, or any combination — rendered in that order.
+    // Everything stacks vertically at the width of the text column.
+    const figs = results.map(r => {
+      const fig = r.src ? `
       <figure class="pmodal__figure">
         <img src="${escapeAttr(r.src)}" alt="${escapeAttr(r.caption || '')}" loading="lazy"
              onerror="this.closest('.pmodal__figure').style.display='none'">
         ${r.caption ? `<figcaption>${escapeHtml(r.caption)}</figcaption>` : ''}
-      </figure>`).join('');
+      </figure>` : '';
+
+      const note = (r.text || r.heading) ? `
+      <div class="pmodal__note">
+        ${r.heading ? `<h4 class="pmodal__note-title">${escapeHtml(r.heading)}</h4>` : ''}
+        ${r.text ? paragraphs(r.text) : ''}
+      </div>` : '';
+
+      const table = buildTable(r.table);
+
+      const parts = fig + note + table;
+      // Grouped when an entry holds more than one block, so they sit closer to
+      // each other than to the neighbouring entries
+      return (fig && (note || table)) || (note && table)
+        ? `<div class="pmodal__result">${parts}</div>`
+        : parts;
+    }).join('');
     return `
       <section class="pmodal__section">
         <h3 class="pmodal__section-title">${escapeHtml(lbl.results)}</h3>
         <div class="pmodal__figures">${figs}</div>
       </section>`;
+  }
+
+  /* Table: { head: ['A','B'], rows: [['1','2'], ...], caption: '...',
+              align: ['left','right'] }  — head, caption and align optional.
+     Cells accept $...$ math like the rest of the modal. */
+  function buildTable(t) {
+    if (!t || !t.rows || !t.rows.length) return '';
+    const align = t.align || [];
+    const cls = i => align[i] ? ` class="is-${escapeAttr(align[i])}"` : '';
+    const cells = (row, tag) => row
+      .map((c, i) => `<${tag}${cls(i)}>${escapeHtml(c)}</${tag}>`).join('');
+
+    const head = (t.head && t.head.length)
+      ? `<thead><tr>${cells(t.head, 'th')}</tr></thead>` : '';
+    const body = `<tbody>${t.rows.map(row => `<tr>${cells(row, 'td')}</tr>`).join('')}</tbody>`;
+
+    return `
+      <div class="pmodal__table-wrap">
+        <table class="pmodal__table">
+          ${t.caption ? `<caption>${escapeHtml(t.caption)}</caption>` : ''}
+          ${head}${body}
+        </table>
+      </div>`;
   }
 
   function paragraphs(text) {
