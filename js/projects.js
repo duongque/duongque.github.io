@@ -17,10 +17,20 @@
            { src: '...png', caption: '...', text: '...' }, // figure + its analysis
            { text: '...', heading: '...' },                // text alone, between
            { table: { head: [...], rows: [[...], [...]],   // two figures
-                      caption: '...', align: [...] } }     // table (see example
-         ]                             // below). Blocks of one entry render as
-                                       // figure, then text, then table.
-                                       // \n\n = new paragraph, heading optional
+                      caption: '...', align: [...] } },    // table alone
+
+           // To chain SEVERAL texts/tables in one logical block (a key like
+           // `text` can't be repeated in one object), use `blocks: [...]`.
+           // Each block has the same figure/text/table keys; they render in
+           // array order, grouped tightly together:
+           { blocks: [
+               { heading: '...', text: 'first paragraph' },
+               { table: { rows: [[...]] } },
+               { text: 'paragraph after the table' }
+           ] }
+         ]                             // within one block: figure, then text,
+                                       // then table. \n\n = new paragraph,
+                                       // heading optional. See examples below.
        }
      },
      fr: { ...same shape... }
@@ -38,9 +48,10 @@ window.PROJECTS = {
       en: {
         title: 'A FLUKA model of the n_TOF EAR2 neutron beam line',
         //title: 'ADS-Target Activation',
-        subtitle: '…and what the beam profile reveals about the effective neutron source',
+        subtitle: 'Published-dimension geometry, a custom FORTRAN source routine, and what the beam profile reveals about the effective neutron source',
         //subtitle: 'A Python-Driven FLUKA Pipeline for Inventory and Residual-Dose Assessment of a MEGAPIE-Class LBE Spallation Target under 800 MeV Proton Irradiation (TRANSMUTEX)',
-        desc: 'n_TOF EAR2 is the vertical neutron time-of-flight beam line at CERN, where a 20 m flight path and a two-stage collimation system deliver a white neutron beam from the lead spallation target to the experimental area. I rebuilt this beam line in FLUKA 2025 from its published dimensions, wrote a custom FORTRAN source routine to inject a realistic composite neutron spectrum, and ran the model to the point where its predictions can be put side by side with measured values from the literature. The purpose is not to re-derive results the n_TOF collaboration already has. It is to demonstrate the full working chain $-$ building a non-trivial geometry from primary references, extending FLUKA with user code, designing a scoring suite, and then confronting the output with published data honestly enough that the disagreements are as informative as the agreements. As it turned out, the most interesting result came from a disagreement.',
+        desc: 'n_TOF EAR2 is the vertical neutron time-of-flight beam line at CERN, where a 20 m flight path and a two-stage collimation system deliver a white neutron beam from the lead spallation target to the experimental area. I rebuilt this beam line in FLUKA 2025 from its published dimensions, wrote a custom FORTRAN source routine to inject a realistic composite neutron spectrum, and ran the model to the point where its predictions can be put side by side with measured values from the literature.\n\n' +
+          'The purpose is not to re-derive results the n_TOF collaboration already has. It is to demonstrate the full working chain $-$ building a non-trivial geometry from primary references, extending FLUKA with user code, designing a scoring suite, and then confronting the output with published data honestly enough that the disagreements are as informative as the agreements. As it turned out, the most interesting result came from a disagreement.',
         //desc: 'ADS-Target Activation models the nuclear inventory and residual radiation field of a MEGAPIE-class lead-bismuth eutectic (LBE) spallation target driven by an 800 MeV, 5 mA proton beam, in a context directly inspired by the TRANSMUTEX accelerator-driven system. The geometry reproduces the reference design: a T91 hemispherical beam window, the LBE target volume, a liquid-lead region acting as the reactor coolant, a T91 vessel and a concrete biological shield. A generic, YAML-driven Python pipeline orchestrates FLUKA end to end. It renders the input from Jinja2 templates, runs the activation simulation, and uses FLUKA\'s native radioactive-decay transport (semi-analogue RADDECAY) to follow the real decay products and build the time-resolved isotopic inventory and residual dose field at several cooling times (end-of-irradiation, 1 h, 1 d, 1 week, 30 days). Particular attention is given to Po-210 production and its radiological implications, including residual dose maps and maintenance-access scenarios, with results benchmarked against MEGAPIE post-test analyses, HINDAS/n_TOF spallation data and NEA/OECD technical reports on LBE-cooled ADS systems. The framework is campaign-agnostic and fully reproducible: geometry, beam, scoring and post-processing (isotope rankings, Z-A maps, Po-210 time evolution, USRBIN dose heatmaps, schematic cross-section) are regenerated automatically from a single configuration file.',
         detail: {
           methodology:
@@ -55,47 +66,94 @@ window.PROJECTS = {
           */
           results: [
             {
-              src: 'assets/projects/ntof_geometry.png',
-              caption: 'Figure 1 $-$ R-Z cross-section of the n_TOF EAR2 beam line as modelled in FLUKA. Top: the full 25 m line from the lead spallation target to the beam dump, with the horizontal axis compressed (Z and R are not to the same scale); the dashed line marks the measurement plane at a flight path of 19.95 m. Bottom: the second collimator to scale, showing its axial layering $-$ 2 m of steel, then 0.6 m of borated polyethylene, then 0.4 m with a B₄C core $-$ and the conical bore narrowing from 70 mm to 21.8 mm. All body coordinates are parsed directly from the FLUKA input, so the drawing cannot drift from the simulated geometry. Dimensions follow Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tables 1-2.'
-              //src: 'assets/projects/transmutex_geometry.png',
-              //caption: 'Reference MEGAPIE-class geometry: T91 beam window, LBE target, liquid-lead coolant, T91 vessel and concrete shield, generated from the YAML configuration.'
-            },
-            {
-              src: 'assets/projects/ntof_flux_lethargy.png',
-              caption: 'Figure 2 $-$ Emitted neutron source spectrum in isolethargic units.',
-              text: 'The composite source spectrum: thermal Maxwellian peak, rising epithermal power-law region, fast log-normal peak near 1 MeV and a high-energy component. Presented as documentation of the source model, not as a validation.'
-            },
-            {
-              src: 'assets/projects/ntof_beam_fwhm.png',
-              caption: 'Figure 3 $-$ Radial beam profile at the sample position, simulated vs published FWHM.',
-              text: 'Test',
-              table: {
-                head: ['Effective source radius', 'Analytic FWHM', 'FLUKA'],
-                align: ['center', 'center', 'center'],
-                rows: [
-                  ['0 (point source)', '23.9 mm', '$-$'],
-                  ['10 cm', '21.0 mm', '20.2 mm'],
-                  ['15.85 cm', '27.0 mm', '29.5 mm'],
-                ]
-              }
-
-              /* ---- Table, rendered after the text of this entry ------------
-                 head    : header row, optional
-                 rows    : one array of cells per row
-                 caption : line printed under the table, optional
-                 align   : per column, 'left' (default), 'right' or 'center'
-                 Cells are plain strings; $...$ math works as everywhere else.
-
-              , table: {
-                  head: ['Quantity', 'This model', 'Published', 'Ratio'],
-                  align: ['left', 'right', 'right', 'right'],
-                  rows: [
-                    ['FWHM at 19.95 m (mm)', '21.4', '19.8', '1.08'],
-                    ['Beam area (cm$^2$)',    '3.6',  '3.1',  '1.16']
-                  ],
-                  caption: 'Table 1 $-$ Simulated beam width against the values quoted in Weiß et al. (2015).'
+              blocks: [
+                { heading: 'The geometry' },
+                {
+                  src: 'assets/projects/ntof_geometry.png',
+                  caption: 'Figure 1 $-$ R-Z cross-section of the n_TOF EAR2 beam line as modelled in FLUKA. Top: the full 25 m line from the lead spallation target to the beam dump, with the horizontal axis compressed (Z and R are not to the same scale); the dashed line marks the measurement plane at a flight path of 19.95 m. Bottom: the second collimator to scale, showing its axial layering $-$ 2 m of steel, then 0.6 m of borated polyethylene, then 0.4 m with a B₄C core $-$ and the conical bore narrowing from 70 mm to 21.8 mm. All body coordinates are parsed directly from the FLUKA input, so the drawing cannot drift from the simulated geometry. Dimensions follow Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tables 1-2.'
+                },
+                {
+                  text: 'The axial layering in the lower panel is worth a note: an early version of this work had the steel and the polyethylene as concentric shells rather than consecutive sections, which changes the attenuation completely. It was caught by going back to the primary reference rather than to a summary of it.'
                 }
-              ------------------------------------------------------------- */
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'The emitted spectrum' },
+                {
+                  src: 'assets/projects/ntof_flux_lethargy.png',
+                  caption: 'Figure 2 $-$ Emitted neutron source spectrum in isolethargic units.'
+                },
+                {
+                  text: 'The composite source spectrum: thermal peak, rising epithermal region, fast peak near 1 MeV and a high-energy component. Shown as documentation of the source model, not as a validation.'
+                }
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'The beam profile $-$ and what it constrains' },
+                {
+                  src: 'assets/projects/ntof_beam_fwhm.png',
+                  caption: 'Figure 3 $-$ Radial beam profile at the sample position, simulated vs published FWHM.'
+                },
+                {
+                  text: 'The published beam width at the sample position is 21 mm FWHM. This is the one quantity in the model that is genuinely independent of the tuned spectrum: it is fixed by the collimator geometry and by the size of the emitting region.'
+                },
+                {
+                  text: 'The first model, with a 15.85 cm emitting disk, gave 29.5 mm $-$ 40 % too wide. Rather than tune parameters until the number fell into place, I built an analytic model of the profile as the convolution of the geometric image of the collimator exit with the demagnified source, which showed something the simulation alone would have hidden:'
+                },
+                {
+                  table: {
+                    head: ['Effective source radius', 'Analytic FWHM', 'FLUKA'],
+                    align: ['center', 'center', 'center'],
+                    rows: [
+                      ['0 (point source)', '23.9 mm', '$-$'],
+                      ['5 cm', '23.2 mm', '$-$'],
+                      ['10 cm', '21.0 mm', '20.2 mm'],
+                      ['15.85 cm', '27.0 mm', '29.5 mm'],
+                    ]
+                  }
+                },
+                {
+                  text: 'The analytic model was built first and used to choose where to look; the FLUKA runs then confirmed it. Tightening the downstream lead disks $-$ the hypothesis I had started from $-$ was also tested and moves the width by only 1.4 mm, so it is not the governing parameter.'
+                },
+                {
+                  text: 'The beam width is not monotonic in source size. Convolving a flat-topped aperture image with a blur of comparable size produces a peaked profile whose half-maximum width is narrower than the flat top $-$ until the blur dominates and broadens it again. A point source therefore cannot reproduce 21 mm either; its 23.9 mm is a hard geometric floor.'
+                },
+                {
+                  text: 'The published width corresponds to an effective emitting radius of about 10 cm, well inside the 30 cm moderator. That is a physically sensible outcome: neutron production is concentrated near the beam axis, so a uniformly emitting disk over-weights the periphery. The honest reading is therefore not "the model predicts the beam width" but "the measured beam width constrains the effective source radius to ≈10 cm" $-$ a weaker claim, and the correct one.'
+                }
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'Radiation protection: activation of the collimator' },
+                {
+                  src: 'assets/projects/ntof_activation.png',
+                  caption: 'Figure 4 $-$ Induced activity and residual dose rate in the C2 steel section as a function of cooling time, after a nominal 180-day irradiation at 10¹³ n/s. The dominant nuclide, labelled at each point, shifts from short-lived to long-lived as the material cools $-$ the textbook signature of an activation inventory relaxing over time.'
+                },
+                {
+                  text: 'The scoring uses FLUKA\'s RADDECAY chain: a RESNUCLEI inventory and a residual dose map are evaluated at six cooling times from end-of-irradiation to one year. At shutdown the activity is dominated by manganese-56 (2.58 h half-life); within a day it has decayed away and chromium-51 (27.7 d) takes over; after a year the residual is mostly iron-55 (2.74 yr). Total activity falls by a factor ≈18 over the year and the peak residual dose rate by ≈74.'
+                },
+                {
+                  table: {
+                    head: ['Nuclide', 'Half-life', 'Activity at shutdown (Bq)', 'Share'],
+                    align: ['left', 'right', 'right', 'right'],
+                    rows: [
+                      ['Mn-56', '2.58 h',  '2.7 × 10¹¹', '52 %'],
+                      ['Cr-51', '27.7 d',  '1.0 × 10¹¹', '20 %'],
+                      ['Mo-99', '66 h',    '2.0 × 10¹⁰', '4 %'],
+                      ['Co-58', '70.9 d',  '2.0 × 10¹⁰', '4 %'],
+                      ['Mn-54', '312 d',   '1.8 × 10¹⁰', '3 %'],
+                      ['Fe-55', '2.74 yr', '1.8 × 10¹⁰', '3 %'],
+                    ],
+                    caption: '190 nuclides in total, 5.2 × 10¹¹ Bq at shutdown.'
+                  }
+                },
+                {
+                  text: 'These are the expected activation products of stainless steel under a neutron field (Mn and Cr from iron and chromium, Co from nickel), which is the main reassurance that the inventory is being built correctly. The absolute scale depends on the assumed 10¹³ n/s beam intensity, a stated nominal figure rather than a measured one; the relative decay and the nuclide ranking do not.'
+                }
+              ]
             }
           ]
         }
@@ -103,9 +161,10 @@ window.PROJECTS = {
       fr: {
         title: 'Un modèle FLUKA de la ligne de faisceau neutronique n_TOF EAR2',
         //title: 'ADS-Target Activation',
-        subtitle: '…et ce que le profil de faisceau révèle sur la source effective',
+        subtitle: 'Géométrie aux cotes publiées, routine source FORTRAN personnalisée, et ce que le profil de faisceau révèle sur la source effective',
         //subtitle: 'Un pipeline FLUKA piloté par Python pour l\'évaluation de l\'inventaire et de la dose résiduelle d\'une cible de spallation LBE de classe MEGAPIE sous irradiation de protons de 800 MeV (TRANSMUTEX)',
-        desc: 'n_TOF EAR2 est la ligne verticale de temps de vol neutronique du CERN, où un parcours de 20 m et un système de collimation à deux étages acheminent un faisceau de neutrons blancs depuis la cible de spallation en plomb jusqu\'à la zone expérimentale. J\'ai reconstruit cette ligne dans FLUKA 2025 à partir de ses cotes publiées, écrit une routine source FORTRAN pour y injecter un spectre neutronique composite réaliste, et mené le modèle jusqu\'au point où ses prédictions peuvent être confrontées aux valeurs mesurées de la littérature. L\'objectif n\'est pas de retrouver des résultats que la collaboration n_TOF possède déjà. Il est de démontrer la chaîne de travail complète $-$ construire une géométrie non triviale à partir de sources primaires, étendre FLUKA par du code utilisateur, concevoir une suite de scorings, puis confronter les sorties aux données publiées avec assez de rigueur pour que les désaccords soient aussi instructifs que les accords. En l\'occurrence, c\'est un désaccord qui a produit le résultat le plus intéressant.',
+        desc: 'n_TOF EAR2 est la ligne verticale de temps de vol neutronique du CERN, où un parcours de 20 m et un système de collimation à deux étages acheminent un faisceau de neutrons blancs depuis la cible de spallation en plomb jusqu\'à la zone expérimentale. J\'ai reconstruit cette ligne dans FLUKA 2025 à partir de ses cotes publiées, écrit une routine source FORTRAN pour y injecter un spectre neutronique composite réaliste, et mené le modèle jusqu\'au point où ses prédictions peuvent être confrontées aux valeurs mesurées de la littérature.\n\n' +
+          'L\'objectif n\'est pas de retrouver des résultats que la collaboration n_TOF possède déjà. Il est de démontrer la chaîne de travail complète $-$ construire une géométrie non triviale à partir de sources primaires, étendre FLUKA par du code utilisateur, concevoir une suite de scorings, puis confronter les sorties aux données publiées avec assez de rigueur pour que les désaccords soient aussi instructifs que les accords. En l\'occurrence, c\'est un désaccord qui a produit le résultat le plus intéressant.',
         //desc: 'ADS-Target Activation modélise l\'inventaire nucléaire et le champ de rayonnement résiduel d\'une cible de spallation en eutectique plomb-bismuth (LBE) de classe MEGAPIE, alimentée par un faisceau de protons de 800 MeV et 5 mA, dans un contexte directement inspiré du système piloté par accélérateur TRANSMUTEX. La géométrie reproduit le design de référence : une fenêtre faisceau hémisphérique en T91, le volume de cible LBE, une région de plomb liquide jouant le rôle de caloporteur du réacteur, une cuve en T91 et un blindage biologique en béton. Un pipeline Python générique, piloté par fichier YAML, orchestre FLUKA de bout en bout. Il génère l\'entrée à partir de templates Jinja2, lance la simulation d\'activation, et utilise le transport natif de décroissance radioactive de FLUKA (RADDECAY semi-analogique) pour suivre les véritables produits de désintégration et construire l\'inventaire isotopique résolu en temps ainsi que le champ de dose résiduelle à plusieurs temps de refroidissement (fin d\'irradiation, 1 h, 1 j, 1 semaine, 30 jours). Une attention particulière est portée à la production de Po-210 et à ses implications radiologiques, incluant les cartes de dose résiduelle et les scénarios d\'accès en maintenance, avec des résultats confrontés aux analyses post-test de MEGAPIE, aux données de spallation HINDAS/n_TOF et aux rapports techniques NEA/AEN sur les systèmes ADS refroidis au LBE. Le cadre est indépendant de la campagne et entièrement reproductible : géométrie, faisceau, scoring et post-traitement (classements isotopiques, cartes Z-A, évolution temporelle du Po-210, cartes de dose USRBIN, coupe schématique) sont régénérés automatiquement à partir d\'un unique fichier de configuration.',
         detail: {
           /*
@@ -120,46 +179,94 @@ window.PROJECTS = {
             'Scoring et dépouillement. Spectre au plan de mesure (19.95 m, convention Ø 100 mm), profil radial à 1 mm, carte H*(10) (ICRP-74), inventaires de nucléides résiduels et cartes de dose à six temps de refroidissement après 180 j. Fusion par usxsuw/usbsuw/ustsuw/usrsuw, analyse Python, script shell qui enchaîne recompilation conditionnelle → cycles → fusion → figures.',
           results: [
             {
-              src: 'assets/projects/ntof_geometry.png',
-              caption: 'Figure 1 $-$ Coupe R-Z de la ligne n_TOF EAR2 telle que modélisée dans FLUKA. En haut : la ligne complète sur 25 m, de la cible de spallation en plomb au beam dump, l\'axe horizontal étant comprimé (Z et R ne sont pas à la même échelle) ; le trait tireté marque le plan de mesure à 19.95 m de parcours. En bas : le second collimateur à l\'échelle, montrant son empilement axial $-$ 2 m d\'acier, puis 0.6 m de polyéthylène boré, puis 0.4 m à cœur de B₄C $-$ et l\'alésage conique se resserrant de 70 mm à 21.8 mm. Les coordonnées de tous les corps sont lues directement dans le fichier d\'entrée FLUKA : le tracé ne peut donc pas diverger de la géométrie simulée. Cotes d\'après Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tableaux 1-2.'
-              //  src: 'assets/projects/transmutex_geometry.png',
-              //  caption: 'Géométrie de référence de classe MEGAPIE : fenêtre faisceau T91, cible LBE, caloporteur plomb liquide, cuve T91 et blindage béton, générée depuis la configuration YAML.'
-            },
-            {
-              src: 'assets/projects/ntof_flux_lethargy.png',
-              caption: 'Figure 2 $-$ Spectre neutronique source émis, en unités isoléthargiques.',
-              text: 'Le spectre source composite : pic thermique, zone épithermique croissante, pic rapide vers 1 MeV et composante haute énergie. Présenté comme documentation du modèle de source, non comme une validation.'
-            },
-            {
-              src: 'assets/projects/ntof_beam_fwhm.png',
-              caption: 'Figure 3 $-$ Profil radial du faisceau à la position échantillon, FWHM simulée vs publiée.',
-              text: 'Test',
-              table: {
-                head: ['Effective source radius', 'Analytic FWHM', 'FLUKA'],
-                align: ['center', 'center', 'center'],
-                rows: [
-                  ['0 (point source)', '23.9 mm', '$-$'],
-                  ['10 cm', '21.0 mm', '20.2 mm'],
-                  ['15.85 cm', '27.0 mm', '29.5 mm'],
-                ]
-              }
-              /* ---- Tableau, rendu après le texte de cette entrée -----------
-                 head    : ligne d'en-tête, optionnelle
-                 rows    : un tableau de cellules par ligne
-                 caption : ligne imprimée sous le tableau, optionnelle
-                 align   : par colonne, 'left' (défaut), 'right' ou 'center'
-                 Les cellules sont de simples chaînes ; $...$ fonctionne.
-
-              , table: {
-                  head: ['Grandeur', 'Ce modèle', 'Publié', 'Rapport'],
-                  align: ['left', 'right', 'right', 'right'],
-                  rows: [
-                    ['FWHM à 19.95 m (mm)',   '21.4', '19.8', '1.08'],
-                    ['Surface faisceau (cm$^2$)', '3.6', '3.1', '1.16']
-                  ],
-                  caption: 'Tableau 1 $-$ Largeur de faisceau simulée face aux valeurs de Weiß et al. (2015).'
+              blocks: [
+                { heading: 'La géométrie' },
+                {
+                  src: 'assets/projects/ntof_geometry.png',
+                  caption: 'Figure 1 $-$ Coupe R-Z de la ligne n_TOF EAR2 telle que modélisée dans FLUKA. En haut : la ligne complète sur 25 m, de la cible de spallation en plomb au beam dump, l\'axe horizontal étant comprimé (Z et R ne sont pas à la même échelle) ; le trait tireté marque le plan de mesure à 19.95 m de parcours. En bas : le second collimateur à l\'échelle, montrant son empilement axial $-$ 2 m d\'acier, puis 0.6 m de polyéthylène boré, puis 0.4 m à cœur de B₄C $-$ et l\'alésage conique se resserrant de 70 mm à 21.8 mm. Les coordonnées de tous les corps sont lues directement dans le fichier d\'entrée FLUKA : le tracé ne peut donc pas diverger de la géométrie simulée. Cotes d\'après Weiß et al., Nucl. Instr. Meth. A 799 (2015) 90-98, Tableaux 1-2.'
+                },
+                {
+                  text: 'L\'empilement axial du panneau inférieur mérite une note : une première version de ce travail modélisait l\'acier et le polyéthylène en coquilles concentriques plutôt qu\'en sections consécutives, ce qui change complètement l\'atténuation. L\'erreur a été détectée en remontant à la source primaire plutôt qu\'à un résumé de celle-ci.'
                 }
-              ------------------------------------------------------------- */
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'Le spectre émis' },
+                {
+                  src: 'assets/projects/ntof_flux_lethargy.png',
+                  caption: 'Figure 2 $-$ Spectre neutronique source émis, en unités isoléthargiques.'
+                },
+                {
+                  text: 'Le spectre source composite : pic thermique, zone épithermique croissante, pic rapide vers 1 MeV et composante haute énergie. Présenté comme documentation du modèle de source, non comme une validation.'
+                }
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'Le profil de faisceau $-$ et ce qu\'il contraint' },
+                {
+                  src: 'assets/projects/ntof_beam_fwhm.png',
+                  caption: 'Figure 3 $-$ Profil radial du faisceau à la position échantillon, FWHM simulée vs publiée.'
+                },
+                {
+                  text: 'La largeur de faisceau publiée à la position échantillon est de 21 mm FWHM. C\'est la seule grandeur du modèle réellement indépendante du spectre ajusté : elle est fixée par la géométrie de collimation et par la taille de la région émettrice.'
+                },
+                {
+                  text: 'Le premier modèle, avec un disque émetteur de 15.85 cm, donnait 29.5 mm $-$ 40 % trop large. Plutôt que d\'ajuster des paramètres jusqu\'à retomber sur la bonne valeur, j\'ai construit un modèle analytique du profil comme convolution de l\'image géométrique de la sortie du collimateur par la source démagnifiée. Il révèle ce que la simulation seule aurait masqué :'
+                },
+                {
+                  table: {
+                    head: ['Rayon de source effectif', 'FWHM analytique', 'FLUKA'],
+                    align: ['center', 'center', 'center'],
+                    rows: [
+                      ['0 (source ponctuelle)', '23.9 mm', '$-$'],
+                      ['5 cm', '23.2 mm', '$-$'],
+                      ['10 cm', '21.0 mm', '20.2 mm'],
+                      ['15.85 cm', '27.0 mm', '29.5 mm'],
+                    ]
+                  }
+                },
+                {
+                  text: 'Le modèle analytique a été construit en premier et a servi à savoir où chercher ; les runs FLUKA l\'ont ensuite confirmé. Resserrer les disques de plomb en aval $-$ l\'hypothèse dont j\'étais parti $-$ a également été testé et ne déplace la largeur que de 1.4 mm : ce n\'est donc pas le paramètre gouvernant.'
+                },
+                {
+                  text: 'La largeur du faisceau n\'est pas monotone en taille de source. Convoluer l\'image en créneau de l\'ouverture par un flou de taille comparable produit un profil piqué dont la largeur à mi-hauteur est plus étroite que le créneau $-$ jusqu\'à ce que le flou domine et l\'élargisse à nouveau. Une source ponctuelle ne peut donc pas non plus reproduire 21 mm : ses 23.9 mm constituent un plancher géométrique infranchissable.'
+                },
+                {
+                  text: 'La largeur publiée correspond à un rayon émetteur effectif d\'environ 10 cm, bien à l\'intérieur du modérateur de 30 cm. C\'est physiquement cohérent : la production de neutrons est concentrée près de l\'axe du faisceau, si bien qu\'un disque émettant uniformément surpondère la périphérie. La lecture honnête n\'est donc pas « le modèle prédit la largeur du faisceau » mais « la largeur mesurée contraint le rayon de source effectif à ≈10 cm » $-$ affirmation plus faible, et correcte.'
+                }
+              ]
+            },
+            {
+              blocks: [
+                { heading: 'Radioprotection : activation du collimateur' },
+                {
+                  src: 'assets/projects/ntof_activation.png',
+                  caption: 'Figure 4 $-$ Activité induite et débit de dose résiduel dans la section acier de C2 en fonction du temps de refroidissement, après une irradiation nominale de 180 jours à 10¹³ n/s. Le nucléide dominant, annoté à chaque point, glisse du court vers le long à mesure que le matériau refroidit $-$ la signature classique d\'un inventaire d\'activation qui se relaxe dans le temps.'
+                },
+                {
+                  text: 'Le scoring s\'appuie sur la chaîne RADDECAY de FLUKA : un inventaire RESNUCLEI et une carte de dose résiduelle sont évalués à six temps de refroidissement, de la fin d\'irradiation à un an. À l\'arrêt, l\'activité est dominée par le manganèse-56 (période 2.58 h) ; en un jour il a décru et le chrome-51 (27.7 j) prend le relais ; après un an le résiduel est essentiellement du fer-55 (2.74 ans). L\'activité totale chute d\'un facteur ≈18 sur l\'année et le pic de débit de dose résiduel d\'un facteur ≈74.'
+                },
+                {
+                  table: {
+                    head: ['Nucléide', 'Période', 'Activité à l\'arrêt (Bq)', 'Part'],
+                    align: ['left', 'right', 'right', 'right'],
+                    rows: [
+                      ['Mn-56', '2.58 h',  '2.7 × 10¹¹', '52 %'],
+                      ['Cr-51', '27.7 j',  '1.0 × 10¹¹', '20 %'],
+                      ['Mo-99', '66 h',    '2.0 × 10¹⁰', '4 %'],
+                      ['Co-58', '70.9 j',  '2.0 × 10¹⁰', '4 %'],
+                      ['Mn-54', '312 j',   '1.8 × 10¹⁰', '3 %'],
+                      ['Fe-55', '2.74 ans', '1.8 × 10¹⁰', '3 %'],
+                    ],
+                    caption: '190 nucléides au total, 5.2 × 10¹¹ Bq à l\'arrêt.'
+                  }
+                },
+                {
+                  text: 'Ce sont les produits d\'activation attendus de l\'acier inox sous flux neutronique (Mn et Cr issus du fer et du chrome, Co du nickel), ce qui constitue la principale assurance que l\'inventaire est correctement construit. L\'échelle absolue dépend de l\'intensité supposée de 10¹³ n/s, valeur nominale déclarée et non mesurée ; la décroissance relative et le classement des nucléides, eux, n\'en dépendent pas.'
+                }
+              ]
             }
           ]
         }
@@ -256,33 +363,50 @@ window.renderProjects = function (lang) {
 
   /* ---------- Detail modal ---------- */
 
+  // Render the blocks carried by a single result entry, in order. An entry may
+  // hold one figure/text/table via flat keys, OR a `blocks` array to chain as
+  // many of them as needed (several texts, several tables, mixed order). Each
+  // block is itself an object with figure (src + caption), text (+ heading)
+  // and/or table keys; within one block those render figure → text → table.
+  function buildBlock(b) {
+    if (!b) return [];
+    const pieces = [];
+
+    if (b.src) {
+      pieces.push(`
+      <figure class="pmodal__figure">
+        <img src="${escapeAttr(b.src)}" alt="${escapeAttr(b.caption || '')}" loading="lazy"
+             onerror="this.closest('.pmodal__figure').style.display='none'">
+        ${b.caption ? `<figcaption>${escapeHtml(b.caption)}</figcaption>` : ''}
+      </figure>`);
+    }
+
+    if (b.text || b.heading) {
+      pieces.push(`
+      <div class="pmodal__note">
+        ${b.heading ? `<h4 class="pmodal__note-title">${escapeHtml(b.heading)}</h4>` : ''}
+        ${b.text ? paragraphs(b.text) : ''}
+      </div>`);
+    }
+
+    const table = buildTable(b.table);
+    if (table) pieces.push(table);
+
+    return pieces;
+  }
+
   function buildFigures(results, lbl) {
     if (!results || !results.length) return '';
-    // Each entry may carry a figure (src + caption), an analysis block
-    // (text + heading), a table, or any combination — rendered in that order.
     // Everything stacks vertically at the width of the text column.
     const figs = results.map(r => {
-      const fig = r.src ? `
-      <figure class="pmodal__figure">
-        <img src="${escapeAttr(r.src)}" alt="${escapeAttr(r.caption || '')}" loading="lazy"
-             onerror="this.closest('.pmodal__figure').style.display='none'">
-        ${r.caption ? `<figcaption>${escapeHtml(r.caption)}</figcaption>` : ''}
-      </figure>` : '';
-
-      const note = (r.text || r.heading) ? `
-      <div class="pmodal__note">
-        ${r.heading ? `<h4 class="pmodal__note-title">${escapeHtml(r.heading)}</h4>` : ''}
-        ${r.text ? paragraphs(r.text) : ''}
-      </div>` : '';
-
-      const table = buildTable(r.table);
-
-      const parts = fig + note + table;
-      // Grouped when an entry holds more than one block, so they sit closer to
-      // each other than to the neighbouring entries
-      return (fig && (note || table)) || (note && table)
-        ? `<div class="pmodal__result">${parts}</div>`
-        : parts;
+      const blocks = Array.isArray(r.blocks) ? r.blocks : [r];
+      const pieces = blocks.reduce((acc, b) => acc.concat(buildBlock(b)), []);
+      if (!pieces.length) return '';
+      // Grouped when an entry produces more than one piece, so they sit closer
+      // to each other than to the neighbouring entries
+      return pieces.length > 1
+        ? `<div class="pmodal__result">${pieces.join('')}</div>`
+        : pieces[0];
     }).join('');
     return `
       <section class="pmodal__section">
