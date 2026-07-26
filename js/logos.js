@@ -36,7 +36,7 @@
     fluka: 'fluka.svg',
     comsol: 'comsol.svg',
     madx: 'madx.svg',
-    dragon: 'dragon.svg',
+    mcnp: 'mcnp.svg',
 
     // Data analysis & scientific computing
     numpy: 'numpy.svg',
@@ -92,7 +92,7 @@
     fluka: 'FLUKA',
     comsol: 'COMSOL',
     madx: 'MAD-X',
-    dragon: 'DRAGON',
+    mcnp: 'MCNP',
 
     numpy: 'NumPy / SciPy / Pandas',
     root: 'ROOT',
