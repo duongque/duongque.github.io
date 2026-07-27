@@ -1955,7 +1955,8 @@ svg {
   line-height: 1.35;
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1977,14 +1978,16 @@ svg {
   margin: 0;
 }
 
-/* "Reviewing" mode: blur the cover and overlay a badge */
+/* Status badge shared by "Submitted" (is-reviewing) and "Accepted"
+   (is-accepted). Only "Submitted" blurs the cover; an accepted paper stays
+   sharp. */
 .pub-preview.is-reviewing .pub-preview__cover img {
   filter: blur(5px);
   opacity: .55;
 }
 
-.pub-preview.is-reviewing .pub-preview__cover::after {
-  content: 'Submitted';
+.pub-preview.is-reviewing .pub-preview__cover::after,
+.pub-preview.is-accepted .pub-preview__cover::after {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -2001,6 +2004,12 @@ svg {
   white-space: nowrap;
   z-index: 2;
 }
+
+/* Badge text, language-aware (html[lang] is set by the language toggle) */
+.pub-preview.is-reviewing .pub-preview__cover::after { content: 'Submitted'; }
+.pub-preview.is-accepted .pub-preview__cover::after { content: 'Accepted'; }
+html[lang="fr"] .pub-preview.is-reviewing .pub-preview__cover::after { content: 'Soumis'; }
+html[lang="fr"] .pub-preview.is-accepted .pub-preview__cover::after { content: 'Accepté'; }
 
 /* "+ Show abstract" toggle button — mimics the pattern of exp-card toggle */
 .pub-preview__toggle {
