@@ -2521,6 +2521,12 @@ a:focus-visible {
   line-height: 1.35;
 }
 
+/* Major sections (Overview, Methodology, Results, References) are numbered
+   automatically in Roman numerals via a counter on their container */
+.pmodal__sections {
+  counter-reset: pmodal-sec;
+}
+
 .pmodal__section {
   margin-top: 2rem;
 }
@@ -2533,6 +2539,13 @@ a:focus-visible {
   margin-bottom: .8rem;
   padding-bottom: .4rem;
   border-bottom: 1px solid var(--line);
+  counter-increment: pmodal-sec;   /* I, II, III … */
+  counter-reset: pmodal-sub;        /* restart a) b) c) inside each section */
+}
+
+.pmodal__section-title::before {
+  content: counter(pmodal-sec, upper-roman) ". ";
+  opacity: .8;
 }
 
 .pmodal__section p {
@@ -2573,12 +2586,22 @@ a:focus-visible {
   margin-top: .9rem;
 }
 
+/* Results sub-part titles ({ heading: ... }): indented under their section and
+   numbered "III.a)", "III.b)" … $-$ the section's Roman numeral plus a letter */
 .pmodal__note-title {
   font-family: var(--font-mono);
   font-size: .85rem;
   font-weight: 500;
   color: var(--accent);
   margin-bottom: .45rem;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--line);
+  counter-increment: pmodal-sub;
+}
+
+.pmodal__note-title::before {
+  content: counter(pmodal-sec, upper-roman) "." counter(pmodal-sub, lower-alpha) ") ";
+  opacity: .8;
 }
 
 .pmodal__figure {
@@ -2662,6 +2685,84 @@ a:focus-visible {
 
 .pmodal__table .is-center {
   text-align: center;
+}
+
+/* ---------- Cross-references, citations and bibliography ---------- */
+
+/* Bold "Figure N" / "Table N" that opens every caption, and **bold** words
+   authored in the text $-$ both use the brighter emphasis colour */
+.pmodal__fig-num,
+.pmodal__sections strong {
+  color: var(--lightest);
+  font-weight: 600;
+}
+
+/* Inline [ref:] cross-reference and [cite:] citation links: they read as plain
+   body text (same font and colour), only revealing they are clickable on hover */
+.pmodal__xref,
+.pmodal__cite {
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pmodal__xref:hover,
+.pmodal__cite:hover,
+.pmodal__xref:focus-visible,
+.pmodal__cite:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+/* Citation number rendered as [1], [1, 2] … */
+.pmodal__cite {
+  font-variant-numeric: tabular-nums;
+}
+
+/* References section: a numbered bibliography */
+.pmodal__refs {
+  margin: 0;
+  padding-left: 1.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.pmodal__ref-item {
+  color: var(--slate-light);
+  font-size: .88rem;
+  line-height: 1.55;
+  padding-left: .2rem;
+}
+
+.pmodal__ref-item::marker {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.pmodal__ref-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Jump targets: keep a little breathing room below the sticky top, and flash
+   briefly when reached from a [ref:]/[cite:] link */
+.pmodal__figure,
+.pmodal__table-wrap,
+.pmodal__ref-item {
+  scroll-margin-top: 1.2rem;
+}
+
+.pmodal__flash {
+  animation: pmodal-flash 1.3s var(--ease);
+}
+
+@keyframes pmodal-flash {
+  0%, 15% { box-shadow: 0 0 0 2px var(--accent); }
+  100% { box-shadow: 0 0 0 2px transparent; }
 }
 
 .pmodal__tech {

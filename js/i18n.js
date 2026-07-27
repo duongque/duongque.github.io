@@ -74,8 +74,8 @@ window.I18N = {
       title: "Some things I've built",
       open_hint: "View project",
       sec_overview: "Overview",
-      sec_method: "Methodology & pipeline",
-      sec_results: "Results & figures",
+      sec_method: "Methodology",
+      sec_results: "Results",
       close: "Close",
     },
     events: {
@@ -210,8 +210,8 @@ window.I18N = {
       title: "Quelques projets que j'ai menés",
       open_hint: "Voir le projet",
       sec_overview: "Présentation",
-      sec_method: "Méthodologie & pipeline",
-      sec_results: "Résultats & figures",
+      sec_method: "Méthodologie",
+      sec_results: "Résultats",
       close: "Fermer",
     },
     events: {
